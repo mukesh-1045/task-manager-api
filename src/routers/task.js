@@ -5,7 +5,7 @@ const Task = require('../models/task');
 const auth = require('../middleware/auth');
 
 
-router.post('/', auth, async (req, res) => {
+router.post('/tasks', auth, async (req, res) => {
     // const task = new Task(req.body);
     const task = new Task({
         ...req.body,
@@ -26,7 +26,7 @@ router.post('/', auth, async (req, res) => {
     // console.log(req.body);
     // res.send('testing perfect');
 })
-    .get('/', auth, async (req, res) => {
+    .get('/tasks', auth, async (req, res) => {
         const match = {}
         const sort = {}
         if (req.query.sortBy) {
@@ -63,7 +63,7 @@ router.post('/', auth, async (req, res) => {
         //     res.status(500).send(error);
         // });
     })
-    .get('/:id', auth, async (req, res) => {
+    .get('/tasks/:id', auth, async (req, res) => {
         // req.params
         const _id = req.params.id;
 
@@ -87,7 +87,7 @@ router.post('/', auth, async (req, res) => {
         //     res.status(500).send(error);
         // });
     })
-    .patch('/:id', auth, async (req, res) => {
+    .patch('/tasks/:id', auth, async (req, res) => {
         const updates = Object.keys(req.body);
         const allowedUpdate = ['description', 'completed'];
         const isValidOperation = updates.every((item) => {
@@ -116,7 +116,7 @@ router.post('/', auth, async (req, res) => {
             res.status(400).send(error);
         }
     })
-    .delete('/:id', auth, async (req, res) => {
+    .delete('/tasks/:id', auth, async (req, res) => {
         try {
             const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
             if (!task) {

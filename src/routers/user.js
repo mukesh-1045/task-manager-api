@@ -27,7 +27,7 @@ const upload = multer({
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/users', async (req, res) => {
     const user = new User(req.body);
 
     try {
@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
     // console.log(req.body);
     // res.send('testing perfect');
 })
-    .get('/me', auth, async (req, res) => {
+    .get('/users/me', auth, async (req, res) => {
 
         const user = req.user;    // changed to all user to only one user i.e profile
         res.send(user);
@@ -91,7 +91,7 @@ router.post('/', async (req, res) => {
     //     //     res.status(500).send(error);
     //     // });
     // })
-    .patch('/me', auth, async (req, res) => {
+    .patch('/users/me', auth, async (req, res) => {
         const updates = Object.keys(req.body);
         const allowedUpdate = ['name', 'email', 'age', 'password'];
         const isValidOperation = updates.every((item) => {
@@ -121,7 +121,7 @@ router.post('/', async (req, res) => {
             res.status(400).send(error);
         }
     })
-    .delete('/me', auth, async (req, res) => {
+    .delete('/users/me', auth, async (req, res) => {
         try {
             // const user = await User.findByIdAndDelete(req.user._id);
             // if (!user) {
@@ -134,7 +134,7 @@ router.post('/', async (req, res) => {
             res.status(500).send(error);
         }
     })
-    .post('/login', async (req, res) => {
+    .post('/users/login', async (req, res) => {
         try {
             const user = await User.findByCredentials(req.body.email, req.body.password);
 
@@ -146,7 +146,7 @@ router.post('/', async (req, res) => {
             res.status(400).send();
         }
     })
-    .post('/logout', auth, async (req, res) => {
+    .post('/users/logout', auth, async (req, res) => {
         try {
             req.user.tokens = req.user.tokens.filter((token) => {
                 return token.token !== req.token
@@ -157,7 +157,7 @@ router.post('/', async (req, res) => {
             res.status(500).send();
         }
     })
-    .post('/logoutAll', auth, async (req, res) => {
+    .post('/users/logoutAll', auth, async (req, res) => {
         try {
             req.user.tokens = [];
             await req.user.save();
@@ -166,7 +166,7 @@ router.post('/', async (req, res) => {
             res.status(500).send()
         }
     })
-    .post('/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    .post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
         //pre process by sharp
 
         const buffer = await sharp(req.file.buffer).png().resize({ width: 250, height: 250 }).toBuffer()
@@ -177,12 +177,12 @@ router.post('/', async (req, res) => {
     }, (error, req, res, next) => {
         res.status(400).send({ error: error.message })
     })
-    .delete('/me/avatar', auth, async (req, res) => {
+    .delete('/users/me/avatar', auth, async (req, res) => {
         req.user.avatar = undefined
         await req.user.save()
         res.send();
     })
-    .get('/:id/avatar', async (req, res) => {
+    .get('/users/:id/avatar', async (req, res) => {
         try {
             const user = await User.findById(req.params.id)
             if (!user || !user.avatar) {
